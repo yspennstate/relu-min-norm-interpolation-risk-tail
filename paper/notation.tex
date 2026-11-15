@@ -1,0 +1,86 @@
+\section{Notation}\label{app:notation}
+Symbols are listed in the order in which they first appear. A symbol with two meanings is used in different sections, and the row says which meaning holds where.
+
+\begin{longtable}{@{}lp{0.55\textwidth}p{0.25\textwidth}@{}}
+\toprule
+Symbol & Meaning & First appears \\ \midrule
+$\mathcal{R}$ & the $\mathcal R$-norm of~\cite{OWSS}, defined through the Radon transform & Section~\ref{sec:intro}\\
+$L$, $p$ & $L_p$ is the space of functions with integrable $p$-th power (introduction only) & Section~\ref{sec:intro}\\
+$d$ & dimension of the ambient space, $d\ge2$ & Section~\ref{sec:intro}\\
+$n$ & sample size & Section~\ref{sec:intro}\\
+$\sigma$ & ReLU, $\sigma(t)=\max(t,0)$ & Section~\ref{sec:intro}\\
+$t$ & a real variable; in tail statements, the threshold & Section~\ref{sec:intro}\\
+$m$ & width of the network & Section~\ref{sec:intro}\\
+$f$ & a network, as a function on $\RR^d$ & \eqref{eq:net}\\
+$x$ & a point of $\RR^d$; $x_i$ are the inputs & \eqref{eq:net}\\
+$j$ & index of units or atoms & \eqref{eq:net}\\
+$a$ & outer weights $a_j$; in the lower bound, $a=\cos(\theta/2)$ & \eqref{eq:net}\\
+$w$ & inner weight vectors $w_j$ & \eqref{eq:net}\\
+$Q$ & half the squared Euclidean norm of all weights & \eqref{eq:net}\\
+$\RR$ & real numbers & Section~\ref{sec:intro}\\
+$\Sph$ & unit sphere of $\RR^d$ & Section~\ref{sec:intro}\\
+$y$ & labels $y_i$ & Section~\ref{sec:intro}\\
+$i$ & index of inputs & Section~\ref{sec:intro}\\
+$R$ & squared risk $R(f)=\EE f(X)^2$; $R_n=R(f_n)$ & Section~\ref{sec:intro}\\
+$\EE$ & expectation & Section~\ref{sec:intro}\\
+$X$ & a uniform point of $\Sph$; $X_i$ are the random inputs & Section~\ref{sec:intro}\\
+$Y$ & Rademacher labels $Y_i$ & Theorem~\ref{thm:main}\\
+$\alpha$ & tail exponent $(d-1)/2$ & Theorem~\ref{thm:main}\\
+$\PP$ & probability & \eqref{eq:tail}\\
+$r$ & order of a moment & Theorem~\ref{thm:main}\\
+$C$ & $C_d=\Gamma(d/2)/(\sqrt\pi\,\Gamma((d-1)/2))$, the density constant of the angle between two uniform points; in the upper bound, $C=8(n-1)\sqrt{d-1}$ & Section~\ref{sec:intro}\\
+$\Gamma$ & gamma function & Section~\ref{sec:intro}\\
+$\pi$ & the number $\pi$ & Section~\ref{sec:intro}\\
+$K$ & $K_{n,d}=n(2+32(n-1)\sqrt{d-1})$; in the lower bound, the excess cost of the competitor lemma & Section~\ref{sec:intro}\\
+$\theta$ & angle between the close pair & Section~\ref{sec:intro}\\
+$O$ & order of magnitude as $\theta\to0$ & Section~\ref{sec:intro}\\
+$v$ & a vector; $v_j$ in the tangent lemma; $v=be_1-ae_2$ in the competitor lemma & Section~\ref{sec:intro}\\
+$\kappa$ & margin of the other inputs from the plane $e_2^\perp$ & Section~\ref{sec:intro}\\
+$H$ & bound on the labels & Section~\ref{sec:intro}\\
+$u$ & unit directions $u_j$ of atoms & Section~\ref{sec:atoms}\\
+$\gamma$ & signed weights $\gamma_j$ of atoms & Section~\ref{sec:atoms}\\
+$T$ & total atomic weight $\sum_j|\gamma_j|$ & \eqref{eq:atomic}\\
+$c$ & coefficient of a term; $c=M^{-1}\Delta$ in the competitor lemma & Section~\ref{sec:atoms}\\
+$\Phi$ & vector of values $\sigma(u\cdot x_i)$ of one atom at the inputs & Section~\ref{sec:atoms}\\
+$J$ & number of atoms in a representation & Section~\ref{sec:atoms}\\
+$\beta$ & positive coefficients $\beta_j$ of a representation & Section~\ref{sec:atoms}\\
+$\omega$ & the vectors $\pm\Phi(u)$ in a representation & Section~\ref{sec:atoms}\\
+$\nu$ & a linear dependence among the $\omega_j$ & Section~\ref{sec:atoms}\\
+$\lambda$ & step size of the reduction & Section~\ref{sec:atoms}\\
+$s$ & $s_{ij}$, the sine of the angle between the lines through $x_i$ and $x_j$; in the lower bound, $s=\sin\theta$ & Section~\ref{sec:upper}\\
+$\delta$ & $\min_{i<j}s_{ij}$, and $\delta_i=\min_{j\ne i}s_{ij}$ & Section~\ref{sec:upper}\\
+$V$ & a Euclidean space & Lemma~\ref{lem:tangent}\\
+$D$ & dimension of $V$ & Lemma~\ref{lem:tangent}\\
+$N$ & number of vectors in the tangent lemma & Lemma~\ref{lem:tangent}\\
+$z$ & in the upper bound, unit vectors $z_i\perp x_i$ ; in the lower bound, the other $n-2$ inputs & Lemma~\ref{lem:tangent}\\
+$G$ & standard Gaussian vector; $G_\theta$ in the localization proposition & Section~\ref{sec:upper}\\
+$\varepsilon$ & the level $1/(4N)$ & Section~\ref{sec:upper}\\
+$\phi$, $\psi$ & real variables of the tent identity & Lemma~\ref{lem:tent}\\
+$\mu$ & slope $\mu_i=C/\delta_i$ of the tent $h_i$ & Section~\ref{sec:upper}\\
+$h$ & tents $h_i$, equal to $1$ at $x_i$ and $0$ at the other inputs & Section~\ref{sec:upper}\\
+$F$ & an interpolant built by hand; $F_0$ in the competitor lemma & Section~\ref{sec:upper}\\
+$\Theta$ & angle between two independent uniform points & Section~\ref{sec:upper}\\
+$B$ & beta function; $B_\theta$ in the localization proposition & Section~\ref{sec:upper}\\
+$A$ & $H^2K_{n,d}^2/(2d)$; $A_\theta$ in the localization proposition & Theorem~\ref{thm:upper}\\
+$e$ & $e_1$, the unit bisector of the pair, and $e_2$, the unit vector along $x_1-x_2$ & Section~\ref{sec:lower}\\
+$b$ & $\sin(\theta/2)$ & Section~\ref{sec:lower}\\
+$k$ & $n-2$ & Section~\ref{sec:lower}\\
+$\tau$ & labels $\tau_i$ of the other inputs & Section~\ref{sec:lower}\\
+$\rho$ & separation of the other inputs & Section~\ref{sec:lower}\\
+$\mathcal{K}$ & sets $\mathcal K^\pm_{\kappa,\rho}$ of configurations on one side of $e_2^\perp$ & Section~\ref{sec:lower}\\
+$\chi$ & a vector annihilating the atoms in the spanning lemma & Section~\ref{sec:lower}\\
+$M$ & correction matrix $M_{ij}=\sigma(u_j\cdot z_i)$; $M_\theta$ in the localization proposition & Section~\ref{sec:lower}\\
+$\eta$ & $\min_j(-u_j\cdot e_1)$ for the correction directions & Section~\ref{sec:lower}\\
+$\Lambda$ & $\Lambda(M)$, the sum of the absolute entries of $M^{-1}$, and its bound $\Lambda_*$ & Section~\ref{sec:lower}\\
+$\ell$ & index $1$ or $2$ of the pair & Section~\ref{sec:lower}\\
+$\xi$ & $\xi_i=z_i\cdot e_1$ & Section~\ref{sec:lower}\\
+$q$ & $q=u\cdot e_2$, and $q_i=z_i\cdot e_2$ & Section~\ref{sec:lower}\\
+$\Delta$ & right-hand side $\Delta_i=\tau_i-\sigma(\xi_i)/a$ of the correction & Section~\ref{sec:lower}\\
+$g$ & normalized difference $g(u)$ of an atom at the pair & Section~\ref{sec:lower}\\
+$\varsigma$ & a sign, and $\varsigma_j=\operatorname{sign}\gamma_j$ & Section~\ref{sec:lower}\\
+$U$ & upper bound $U_\theta$ for $M_\theta$ & Section~\ref{sec:lower}\\
+$E$ & localization error $E_\theta$ & Section~\ref{sec:lower}\\
+$P$ & probability $P_{\kappa,\rho}$ that the other inputs are in $\mathcal K^+_{\kappa,\rho}\cup\mathcal K^-_{\kappa,\rho}$ & Section~\ref{sec:lower}\\
+$\zeta$ & small positive number & Section~\ref{sec:lower}\\
+\bottomrule
+\end{longtable}
