@@ -31,23 +31,21 @@
 
 \begin{document}
 \begin{abstract}
-We study two-layer ReLU networks without biases that interpolate $n$ independent Rademacher labels at independent uniform points of the sphere $\Sph$ with the smallest Euclidean norm of the weights. For univariate networks with biases Joshi, Vardi and Srebro showed that the expected squared risk of minimum-norm interpolants of noisy labels is infinite. In the bias-free model on the sphere, at every fixed sample size $n\ge3$, the tail of the squared risk is a power law with exponent $(d-1)/2$, from above and from below. So the expected risk is infinite in dimensions two and three and finite in dimension four and higher. The lower bound comes from a close pair of inputs with opposite labels and the other inputs on one side of the plane between them. The upper bound comes from an explicit interpolant whose cost is controlled by the smallest angle between two input lines.
+We study two-layer ReLU networks without biases that interpolate $n$ independent Rademacher labels at independent uniform points of the sphere $\Sph$ with the smallest Euclidean norm of the weights. For univariate networks with biases Joshi, Vardi and Srebro showed that the minimum-norm interpolant of noisy labels overfits catastrophically in the squared loss and that its expected risk is infinite. In the bias-free model on the sphere, at every fixed sample size $n\ge3$, the tail of the squared risk is a power law with exponent $(d-1)/2$, from above and from below. So the expected risk is infinite for $d=2,3$ and finite for $d\ge4$. The lower bound comes from a close pair of inputs with opposite labels and the other inputs on one side of the hyperplane bisecting the pair. The upper bound comes from an explicit interpolant whose cost is at most a constant times the reciprocal of the smallest sine of the angle between two input lines.
 \end{abstract}
 \maketitle
 
 \section{Introduction}\label{sec:intro}
-Overparameterized networks fit a noisy training set exactly and still predict reasonably well. How the risk of such an interpolant behaves as the sample grows is the subject of~\cite{MSAPBN,JVS,KYS,KSNM}. Mallinar, Simon, Abedsoltan, Pandit, Belkin and Nakkiran~\cite{MSAPBN} sorted the possible behaviours into benign (the excess risk tends to zero), tempered (it stays bounded away from zero and infinity) and catastrophic (it diverges). For two-layer ReLU networks the natural interpolant is the one of minimum weight norm: as the weight-decay penalty tends to zero, accumulation points of the global minimizers of the penalized loss are minimum-norm interpolants. Savarese, Evron, Soudry and Srebro~\cite{SESS} identified the function-space norm that this selects for univariate inputs, and Ongie, Willett, Soudry and Srebro~\cite{OWSS} did so in several variables, where it is the $\mathcal R$-norm defined through the Radon transform; see also Bach~\cite{Bach} and Parhi and Nowak~\cite{PN} for the atomic, or variation, norm of such networks and its representer theorems. Those works concern ReLU ridges with biases, and the $\mathcal R$-norm leaves affine functions free of cost. Here every ridge passes through the origin and nothing is free: a linear function, the difference of two opposite ridges, costs twice the norm of its gradient.
+Overparameterized networks fit a noisy training set exactly and still predict reasonably well. Mallinar, Simon, Abedsoltan, Pandit, Belkin and Nakkiran~\cite{MSAPBN} sorted the possible behaviours of the risk of such an interpolant, as the sample grows, into benign (the excess risk tends to zero), tempered (it stays bounded away from zero and infinity) and catastrophic (it diverges). Karhadkar, Sietsema, Needell and Mont\'ufar~\cite{KSNM} proved that near-minimal interpolants in Sobolev spaces overfit harmfully, with excess risk bounded below with high probability. Kornowski, Yehudai and Shamir~\cite{KYS} showed for classification that the passage from tempered to benign overfitting depends on the input dimension. For two-layer ReLU networks we study the interpolant of minimum weight norm. Savarese, Evron, Soudry and Srebro~\cite{SESS} identified the function-space norm that this selects for univariate networks with biases. Ongie, Willett, Soudry and Srebro~\cite{OWSS} did so in several variables, where it is the $\mathcal R$-norm defined through the Radon transform, and this norm leaves affine functions free of cost. Bach~\cite{Bach} studied the corresponding variation norm and the convex networks it defines, and Parhi and Nowak~\cite{PN} proved representer theorems for it. In this paper no neuron has a bias and no function is free of cost: a linear function, the difference of two opposite neurons, can be written at cost twice the norm of its gradient.
 
-For univariate networks with biases Joshi, Vardi and Srebro~\cite{JVS} determined the overfitting of the minimum-norm interpolant of noisy labels: it is tempered in $L_p$ for $1\le p<2$ and catastrophic for $p\ge2$, and the expected risk over the training set is infinite. The mechanism is a pair of nearby training points with opposite labels: the interpolant changes by $2$ between them, so its slope there is of order the reciprocal of their distance, and that slope carries the function far from zero on a neighbouring interval. A univariate network without biases is a combination of two ridges, one on each half-line, so their model is not a special case of ours. Karhadkar, Sietsema, Needell and Mont\'ufar~\cite{KSNM} proved that near-minimal interpolants in Sobolev spaces overfit harmfully, with excess risk bounded below with high probability. Kornowski, Yehudai and Shamir~\cite{KYS} showed for classification that the passage from tempered to benign overfitting depends on the input dimension. We are not aware of a two-sided fixed-sample-size bound on the risk tail, uniform over minimum-weight-norm interpolants, for the bias-free spherical regression model studied here.
-
-We fix the sample size and ask how heavy the tail of the risk is. The answer is a power law with exponent $(d-1)/2$. In one direction the close-pair mechanism of~\cite{JVS} survives in every dimension, provided the other points do not cancel it; in the other direction no configuration does worse than a close pair, because the cost of interpolation is at most a constant times the reciprocal of the smallest projective distance between inputs. The exponent is the tail exponent of the inverse square of the smallest such distance among $n$ uniform points. The atomic form of the weight norm and the reduction to finitely many atoms in Section~\ref{sec:atoms} are standard. What is new is a localization of every minimum-norm interpolant near a close pair with the other points on one side, uniform over configurations, labels and minimizers (Proposition~\ref{prop:local}); a bound on the interpolation cost by the smallest projective gap (Proposition~\ref{prop:tents}); and their combination into a two-sided tail.
+Joshi, Vardi and Srebro~\cite{JVS} treat univariate inputs uniform on $[0,1]$ and networks with biases, with the biases included in the norm and an affine skip connection free of cost. As $n\to\infty$ the minimum-norm interpolant of noisy labels is, in probability, tempered for the loss $|f(x)-y|^p$ with exponent $1\le p<2$ \cite[Theorems~2 and~3]{JVS} and, for Gaussian label noise, catastrophic for $p\ge2$ \cite[Theorem~4]{JVS}. The catastrophic behaviour comes from spikes formed by training points very close to their neighbours with different labels. The expected risk in this loss is infinite already for $p<2$, because of the intervals between the ends of $[0,1]$ and the extreme samples \cite[(10)]{JVS}. The results of~\cite{JVS} are for univariate inputs with biases, those of~\cite{KSNM} are lower bounds in probability for Sobolev interpolants, and those of~\cite{KYS} are for classification. Here we fix the sample size and ask how heavy the tail of the risk is.
 
 \medskip\noindent\emph{Setting.}
 Let $\sigma(t)=\max(t,0)$ and $d\ge2$. A network of width $m$ is
 \begin{equation}\label{eq:net}
 f(x)=\sum_{j=1}^m a_j\,\sigma(w_j\cdot x),\qquad Q(a,w)=\frac12\sum_{j=1}^m\bigl(a_j^2+\|w_j\|^2\bigr),
 \end{equation}
-with $a_j\in\RR$, $w_j\in\RR^d$, and no biases, skip connections or output offsets. Given inputs $x_1,\dots,x_n\in\Sph$ and labels $y_1,\dots,y_n$, a minimum-norm interpolant minimizes $Q$ over all networks with $f(x_i)=y_i$ for every $i$, either at a fixed width $m\ge n$ or over all finite widths; by Lemma~\ref{lem:reduce} the two give the same functions on the sample and the same minimum value. The test distribution is the uniform probability measure on $\Sph$, the regression function is zero, and the risk of $f$ is
+with $a_j\in\RR$, $w_j\in\RR^d$, and no biases, skip connections or output offsets; we call $Q$ the cost of the network and $a_j\sigma(w_j\cdot x)$ its neurons. Given inputs $x_1,\dots,x_n\in\Sph$ and labels $y_1,\dots,y_n$, a minimum-norm interpolant minimizes $Q$ over all networks with $f(x_i)=y_i$ for every $i$, either at a fixed width $m\ge n$ or over all finite widths; by Lemma~\ref{lem:reduce} the minimum value is the same in both cases, and we call it the interpolation cost. The test distribution is the uniform probability measure on $\Sph$, the regression function is zero, and the risk of $f$ is
 \[
 R(f)=\EE_X f(X)^2,\qquad X\sim\mathrm{Unif}(\Sph).
 \]
@@ -60,29 +58,39 @@ Let $n\ge3$ and $d\ge2$. Let $X_1,\dots,X_n$ be independent and uniform on $\Sph
 Consequently, for $r>0$, $\EE R_n^r<\infty$ if and only if $r<(d-1)/2$. In particular $\EE R_n=\infty$ for $d=2,3$, and $0<\EE R_n<\infty$ for $d\ge4$.
 \end{theorem}
 
-The constants are explicit. With $C_d=\Gamma(d/2)/(\sqrt\pi\,\Gamma((d-1)/2))$, the density constant of the angle between two uniform points, the lower limit in~\eqref{eq:tail} is at least $2^{2-n}C_d(2/d)^{\alpha}/(d-1)$ (Theorem~\ref{thm:lower}), and the upper limit is at most $\binom n2\frac{2C_d}{d-1}2^{d-1}\bigl(K_{n,d}^2/(2d)\bigr)^{\alpha}$ with $K_{n,d}=n(2+32(n-1)\sqrt{d-1})$ (Theorem~\ref{thm:upper}). The lower constant decays like $2^{-n}$ and the upper one grows polynomially in $n$, so the theorem says nothing about the behaviour as $n\to\infty$; see Section~\ref{sec:discussion}.
+The constants are explicit. With $C_d=\Gamma(d/2)/(\sqrt\pi\,\Gamma((d-1)/2))$, the density constant of the angle between two uniform points, the lower limit in~\eqref{eq:tail} is at least $2^{2-n}C_d(2/d)^{\alpha}/(d-1)$ (Theorem~\ref{thm:lower}), and the upper limit is at most $\binom n2\frac{2C_d}{d-1}2^{d-1}\bigl(K_{n,d}^2/(2d)\bigr)^{\alpha}$, where $K_{n,d}=n(2+32(n-1)\sqrt{d-1})$ is the constant of Proposition~\ref{prop:tents} (Theorem~\ref{thm:upper}). The lower constant decays like $2^{-n}$ and the upper one grows polynomially in $n$. Neither constant is uniform in $n$.
 
-The upper bound holds for arbitrary bounded labels and every $n\ge2$ (Theorem~\ref{thm:upper}). The lower bound uses a close pair with opposite labels together with the event that the other $n-2$ points lie on one side of the hyperplane bisecting the pair. That event has probability $2^{3-n}$, and it is needed for the argument: if extra points lie on both sides at a fixed distance from the hyperplane, the interpolation cost cannot stay below $2/\sin\theta+O(1)$ (Remark~\ref{rem:sides}).
+For $d=2$ a bias-free network on the circle restricts to univariate networks with biases, but Theorem~\ref{thm:main} is not a case of the results of~\cite{JVS}. For $x\in\mathbb S^1$ with $x_2\ne0$ put $\lambda=x_1/x_2$. Positive homogeneity of $\sigma$ and the identity $\sigma(-t)=\sigma(t)-t$ for real $t$ give
+\[
+f(x)=|x_2|\,\hat f(\lambda)\quad(x_2>0),\qquad f(x)=|x_2|\,\bigl(\hat f(\lambda)-\ell(\lambda)\bigr)\quad(x_2<0),
+\]
+where $\hat f(\lambda)=\sum_ja_j\sigma(w_{j1}\lambda+w_{j2})$ is a univariate network whose neuron $j$ has slope $w_{j1}$ and bias $w_{j2}$, and $\ell(\lambda)=\sum_ja_j(w_{j1}\lambda+w_{j2})$ is affine. The cost $Q$ is half the squared norm of the weights of $\hat f$, biases included, as in~\cite{JVS}. The differences are these. No affine term is free: $\ell$ is determined by $\hat f$, and the two half circles carry $\hat f$ and $\hat f-\ell$, so the inputs on one half constrain the network on the other. An input $x_i$ with $x_{i2}>0$ imposes $\hat f(\lambda_i)=y_i\sqrt{1+\lambda_i^2}$, so the labels seen by $\hat f$ are not bounded. The points $\lambda_i$ follow the standard Cauchy law, and the risk is
+\[
+R(f)=\frac1{2\pi}\int_{\RR}\frac{\hat f(\lambda)^2+\bigl(\hat f(\lambda)-\ell(\lambda)\bigr)^2}{(1+\lambda^2)^2}\,d\lambda .
+\]
+The circle has no ends, and for $d=2,3$ the expectation in Theorem~\ref{thm:main} is infinite because of close pairs (Theorem~\ref{thm:lower}).
 
-\emph{Conventions.} For a vector $v$, $v^\perp$ is its orthogonal complement. The constants $C_d$, $K_{n,d}$, $C$ and $K$ are fixed where they are defined and do not change from line to line. In Section~\ref{sec:lower}, $O(\theta)$ and $O(\sqrt\theta)$ refer to $\theta\to0$, with implied constants depending only on $K$, $\kappa$ and $H$. A table of notation is in Appendix~\ref{app:notation}.
+On the sphere the cost of interpolating two close inputs with different labels depends on where the other inputs lie. Let two inputs at angle $\theta$ carry the labels $1$ and $-1$, and let $e_2$ be the unit vector along their difference. If other inputs with bounded labels lie on both sides of the hyperplane $e_2^\perp$, at a fixed distance from it, the interpolation cost exceeds $2/\sin\theta$ by an amount that is unbounded as $\theta\to0$, and this alone does not decide the size of the risk (Remark~\ref{rem:sides}). Suppose instead that all other inputs lie on the side of the input labelled $1$, at distance at least $\kappa$ from the hyperplane and at least $\rho$ from one another, and that their labels are bounded by $H$. Then there is an interpolant of cost at most $2/\sin\theta+K_0$ with $K_0$ independent of $\theta$ (Lemma~\ref{lem:competitor}), and every minimum-norm interpolant $f_\theta$ satisfies
+\[
+\sup_{\|x\|\le1}\bigl|\theta f_\theta(x)+2\sigma(-e_2\cdot x)\bigr|\to0,\qquad
+\theta^2R(f_\theta)\to\frac2d\qquad(\theta\to0),
+\]
+uniformly over these positions and labels and over the minimizers. If the other inputs lie on the side of the input labelled $-1$, the same holds with $2\sigma(e_2\cdot x)$ in place of $-2\sigma(-e_2\cdot x)$ (Proposition~\ref{prop:local}). The other $n-2$ inputs lie on one side of $e_2^\perp$ with probability $2^{3-n}$, whatever $\theta$ is, and this gives the lower bound in~\eqref{eq:tail}. For the upper bound let $\delta$ be the smallest sine of the angle between two input lines. For labels bounded by $H$ there is an interpolant $\sum_iy_ih_i$, where the tent $h_i$ is a combination of three neurons equal to $1$ at $x_i$ and to $0$ at the other inputs, of cost
+\[
+Q\le\frac{HK_{n,d}}{\delta}
+\]
+(Proposition~\ref{prop:tents}), so that $R(f)\le H^2K_{n,d}^2/(2d\,\delta^2)$ for every minimum-norm interpolant $f$. This holds for arbitrary bounded labels and every $n\ge2$ (Theorem~\ref{thm:upper}). The angle between two independent uniform points of $\Sph$ has density proportional to $\sin^{d-2}\theta$, which gives the exponent $(d-1)/2$ in both bounds. The two bounds have the same order in the angle and differ by the factor $K_{n,d}^2/4$.
 
-\begin{center}
-\begin{tabular}{@{}lp{0.38\textwidth}p{0.42\textwidth}@{}}
-\toprule
-Section & what it proves & what it uses\\\midrule
-\ref{sec:atoms} & atomic form, risk bound, existence of minimizers & homogeneity of $\sigma$, Carath\'eodory's argument\\
-\ref{sec:upper} & upper tail and finite moments & tent identity, Gaussian choice of direction, Section~\ref{sec:atoms}\\
-\ref{sec:lower} & lower tail and infinite moments & competitor, localization, Section~\ref{sec:atoms}\\
-\ref{sec:discussion} & what is left open & ---\\\bottomrule
-\end{tabular}
-\end{center}
+The rescaling of Section~\ref{sec:atoms}, which turns $Q$ into a sum of absolute weights, is Theorem~1 of Neyshabur, Tomioka and Srebro~\cite{NTS}, and the reduction to $n$ neurons is the argument of Carath\'eodory's theorem.
+
+\emph{Conventions.} For a vector $v$, $v^\perp$ is its orthogonal complement. A table of notation is in Appendix~\ref{app:notation}.
 
 \section{Atoms, existence and a risk bound}\label{sec:atoms}
-For a unit with $w_j\neq0$ put $u_j=w_j/\|w_j\|$ and $\gamma_j=a_j\|w_j\|$. Positive homogeneity of $\sigma$ and the inequality $(a^2+\|w\|^2)/2\ge|a|\,\|w\|$ give
+For a neuron with $w_j\neq0$ put $u_j=w_j/\|w_j\|$ and $\gamma_j=a_j\|w_j\|$. Positive homogeneity of $\sigma$ and the inequality $(a^2+\|w\|^2)/2\ge|a|\,\|w\|$ give the atomic form
 \begin{equation}\label{eq:atomic}
 f(x)=\sum_j\gamma_j\,\sigma(u_j\cdot x),\qquad \|u_j\|=1,\qquad T(f):=\sum_j|\gamma_j|\le Q(a,w).
 \end{equation}
-Conversely, an atom $\gamma\sigma(u\cdot x)$ with $\|u\|=1$ is realized at cost exactly $|\gamma|$ by $a=\operatorname{sign}(\gamma)\sqrt{|\gamma|}$, $w=\sqrt{|\gamma|}\,u$. In particular a term $c\,\sigma(v\cdot x)$ with $v\neq0$ costs $|c|\,\|v\|$. The quantity $T(f)$ is the cost of the representation~\eqref{eq:atomic}, not a function of $f$ alone; whenever we write $T(f)$ a representation is fixed. Thus the minimum of $Q$ over interpolants equals the minimum of $T$ over finite atomic interpolants.
+We call $\gamma\sigma(u\cdot x)$ with $\|u\|=1$ an atom. Conversely, an atom is realized at cost exactly $|\gamma|$ by $a=\operatorname{sign}(\gamma)\sqrt{|\gamma|}$, $w=\sqrt{|\gamma|}\,u$; in particular $\gamma\sigma(v\cdot x)$ with $v\neq0$ is realized at cost $|\gamma|\,\|v\|$. This is Theorem~1 of~\cite{NTS}. The quantity $T(f)$, the total weight of the representation~\eqref{eq:atomic}, is not a function of $f$ alone; whenever we write $T(f)$ a representation is fixed. An atomic interpolant of labels $y$ is a finite sum~\eqref{eq:atomic} with $f(x_i)=y_i$ for every $i$. Thus the interpolation cost is the minimum of $T$ over atomic interpolants.
 
 \begin{lemma}\label{lem:risk}
 For every network, $R(f)\le T(f)^2/(2d)\le Q^2/(2d)$.
@@ -92,12 +100,12 @@ For a unit vector $u$, symmetry gives $\EE\sigma(u\cdot X)^2=\frac12\EE(u\cdot X
 \end{proof}
 
 \begin{lemma}\label{lem:reduce}
-Let $x_1,\dots,x_n\in\Sph$ be pairwise non-parallel. Every finite atomic interpolant of labels $y\in\RR^n$ can be replaced by one with at most $n$ atoms and no larger cost. Minimum-norm interpolants exist at every fixed width $m\ge n$ and over all widths, and the minimum values coincide.
+Let $x_1,\dots,x_n\in\Sph$ be pairwise non-parallel. Every atomic interpolant of labels $y\in\RR^n$ can be replaced by one with at most $n$ atoms and no larger total weight. Minimum-norm interpolants exist at every fixed width $m\ge n$ and over all widths, and the minimum values coincide.
 \end{lemma}
 \begin{proof}
-Write $\Phi(u)=(\sigma(u\cdot x_1),\dots,\sigma(u\cdot x_n))$. An atomic interpolant is a representation $y=\sum_{j=1}^J\beta_j\omega_j$ with $\beta_j>0$ and $\omega_j\in\{\pm\Phi(u):\|u\|=1\}$, of cost $\sum_j\beta_j$. If $J>n$ there is a nonzero $\nu\in\RR^J$ with $\sum_j\nu_j\omega_j=0$; replacing $\nu$ by $-\nu$ if needed we may assume $\sum_j\nu_j\ge0$ and some $\nu_j>0$. With $\lambda=\min_{\nu_j>0}\beta_j/\nu_j$ the coefficients $\beta_j-\lambda\nu_j$ are nonnegative, one of them vanishes, the represented vector is unchanged and the cost does not increase. Repeating gives at most $n$ atoms.
+Write $\Phi(u)=(\sigma(u\cdot x_1),\dots,\sigma(u\cdot x_n))$. An atomic interpolant is a representation $y=\sum_{j=1}^J\beta_j\omega_j$ with $\beta_j>0$ and $\omega_j\in\{\pm\Phi(u):\|u\|=1\}$, of cost $\sum_j\beta_j$. If $J>n$ there is a nonzero $\nu\in\RR^J$ with $\sum_j\nu_j\omega_j=0$; replacing $\nu$ by $-\nu$ if needed we may assume $\sum_j\nu_j\ge0$ and some $\nu_j>0$. With $\varepsilon_0=\min_{\nu_j>0}\beta_j/\nu_j$ the coefficients $\beta_j-\varepsilon_0\nu_j$ are nonnegative, one of them vanishes, the represented vector is unchanged and the cost does not increase. Repeating gives at most $n$ atoms. This is the argument of Carath\'eodory's theorem for cones, as in~\cite{Bach}; it is printed because the bound $n$ on the number of atoms is the width in Theorem~\ref{thm:main}.
 
-Feasibility at width $n$ follows from Proposition~\ref{prop:tents} below (or from the spanning argument of Lemma~\ref{lem:span}). At a fixed width the interpolation constraints are closed and the sublevel sets of $Q$ are compact, so a minimizer exists. Every interpolant of any finite width reduces to width $n$ at no larger cost by the first part, so the infimum over all widths is attained at width $n$, and zero units pad it to any $m\ge n$.
+Feasibility at width $n$ follows from Proposition~\ref{prop:tents} below, whose proof uses only the first part of this lemma. At a fixed width the interpolation constraints are closed and the sublevel sets of $Q$ are compact, so a minimizer exists. Every interpolant of any finite width reduces to width $n$ at no larger cost by the first part, so the infimum over all widths is attained at width $n$, and zero neurons pad it to any $m\ge n$.
 \end{proof}
 
 \section{The upper bound}\label{sec:upper}
@@ -107,19 +115,19 @@ s_{ij}=\sqrt{1-(x_i\cdot x_j)^2},\qquad \delta=\min_{i<j}s_{ij}>0,
 \]
 the smallest sine of the angle between two input lines.
 
-\begin{lemma}\label{lem:tangent}
-Let $V$ be a Euclidean space of dimension $D\ge1$ and $v_1,\dots,v_N\in V$ unit vectors. There is a unit vector $z\in V$ with $|z\cdot v_j|\ge1/(8N\sqrt D)$ for every $j$.
+\begin{lemma}[Choice of direction]\label{lem:tangent}
+Let $V$ be a Euclidean space of dimension $D\ge1$ and $v_1,\dots,v_N\in V$ unit vectors. There is a unit vector $\tilde z\in V$ with $|\tilde z\cdot v_j|\ge1/(8N\sqrt D)$ for every $j$.
 \end{lemma}
 \begin{proof}
-Let $G$ be a standard Gaussian vector in $V$ and $\varepsilon=1/(4N)$. Each $G\cdot v_j$ is standard normal, so $\PP(|G\cdot v_j|<\varepsilon)\le\sqrt{2/\pi}\,\varepsilon<\varepsilon$, and the union bound gives probability less than $1/4$ that some $|G\cdot v_j|<\varepsilon$. By Markov's inequality $\PP(\|G\|^2>4D)\le1/4$. So some $G\ne0$ has $\|G\|\le2\sqrt D$ and $|G\cdot v_j|\ge\varepsilon$ for all $j$, and $z=G/\|G\|$ works.
+Let $G$ be a standard Gaussian vector in $V$ and $\varepsilon=1/(4N)$. Each $G\cdot v_j$ is standard normal, so $\PP(|G\cdot v_j|<\varepsilon)\le\sqrt{2/\pi}\,\varepsilon<\varepsilon$, and the union bound gives probability less than $1/4$ that some $|G\cdot v_j|<\varepsilon$. By Markov's inequality $\PP(\|G\|^2>4D)\le1/4$. So some $G\ne0$ has $\|G\|\le2\sqrt D$ and $|G\cdot v_j|\ge\varepsilon$ for all $j$, and $\tilde z=G/\|G\|$ works.
 \end{proof}
 
-Fix $i$ and apply the lemma in $V=x_i^\perp$, of dimension $d-1$, to the unit vectors $v_j=(x_j-(x_i\cdot x_j)x_i)/s_{ij}$, $j\ne i$. This gives a unit vector $z_i\perp x_i$ with
+Fix $i$ and apply the lemma in $V=x_i^\perp$, of dimension $d-1$, to the unit vectors $v_j=(x_j-(x_i\cdot x_j)x_i)/s_{ij}$, $j\ne i$. This gives a unit vector $\tilde z_i\perp x_i$ with
 \begin{equation}\label{eq:zi}
-|z_i\cdot x_j|=s_{ij}|z_i\cdot v_j|\ge s_{ij}/C\quad(j\neq i),\qquad C=8(n-1)\sqrt{d-1}.
+|\tilde z_i\cdot x_j|=s_{ij}|\tilde z_i\cdot v_j|\ge s_{ij}/c_0\quad(j\neq i),\qquad c_0=8(n-1)\sqrt{d-1}.
 \end{equation}
 
-\begin{lemma}\label{lem:tent}
+\begin{lemma}[Tent identity]\label{lem:tent}
 For real $\phi,\psi$, $\sigma(\phi+\psi)+\sigma(\phi-\psi)-2\sigma(\phi)=(|\psi|-|\phi|)_+$.
 \end{lemma}
 \begin{proof}
@@ -127,22 +135,22 @@ With $\sigma(v)=(v+|v|)/2$ the left side is $\frac12(|\phi+\psi|+|\phi-\psi|-2|\
 \end{proof}
 
 \begin{proposition}\label{prop:tents}
-Let $x_1,\dots,x_n\in\Sph$ be pairwise non-parallel and $|y_i|\le H$. There is an interpolant with at most $n$ units and cost at most $HK_{n,d}/\delta$, where $K_{n,d}=n\bigl(2+32(n-1)\sqrt{d-1}\bigr)$. Consequently every minimum-norm interpolant $f$ satisfies $Q\le HK_{n,d}/\delta$ and $R(f)\le H^2K_{n,d}^2/(2d\delta^2)$.
+Let $x_1,\dots,x_n\in\Sph$ be pairwise non-parallel and $|y_i|\le H$. There is an interpolant with at most $n$ neurons and cost at most $HK_{n,d}/\delta$, where $K_{n,d}=n\bigl(2+32(n-1)\sqrt{d-1}\bigr)$. Consequently every minimum-norm interpolant $f$ satisfies $Q\le HK_{n,d}/\delta$ and $R(f)\le H^2K_{n,d}^2/(2d\delta^2)$.
 \end{proposition}
 \begin{proof}
-Let $\delta_i=\min_{j\ne i}s_{ij}$ and $\mu_i=C/\delta_i$. By Lemma~\ref{lem:tent} with $\phi=\mu_iz_i\cdot x$ and $\psi=x_i\cdot x$,
+Let $\delta_i=\min_{j\ne i}s_{ij}$ and $\mu_i=c_0/\delta_i$. By Lemma~\ref{lem:tent} with $\phi=\mu_i\tilde z_i\cdot x$ and $\psi=x_i\cdot x$, the tent at $x_i$ is
 \[
-h_i(x)=\sigma\bigl((\mu_iz_i+x_i)\cdot x\bigr)+\sigma\bigl((\mu_iz_i-x_i)\cdot x\bigr)-2\sigma(\mu_iz_i\cdot x)=\bigl(|x_i\cdot x|-\mu_i|z_i\cdot x|\bigr)_+ .
+h_i(x)=\sigma\bigl((\mu_i\tilde z_i+x_i)\cdot x\bigr)+\sigma\bigl((\mu_i\tilde z_i-x_i)\cdot x\bigr)-2\sigma(\mu_i\tilde z_i\cdot x)=\bigl(|x_i\cdot x|-\mu_i|\tilde z_i\cdot x|\bigr)_+ .
 \]
-Since $z_i\perp x_i$, $h_i(x_i)=1$. For $j\ne i$,~\eqref{eq:zi} gives $\mu_i|z_i\cdot x_j|\ge s_{ij}/\delta_i\ge1\ge|x_i\cdot x_j|$, so $h_i(x_j)=0$. Hence $F=\sum_iy_ih_i$ interpolates. The inner weight vectors $\mu_iz_i\pm x_i$ of $h_i$ have norm $\sqrt{1+\mu_i^2}\le1+\mu_i$, so $T(h_i)\le2+4\mu_i\le(2+4C)/\delta_i$, using $\delta_i\le1$. Summing, $T(F)\le Hn(2+4C)/\delta=HK_{n,d}/\delta$. Lemma~\ref{lem:reduce} reduces $F$ to at most $n$ atoms without raising the cost, and Lemma~\ref{lem:risk} gives the risk bound.
+Since $\tilde z_i\perp x_i$, $h_i(x_i)=1$. For $j\ne i$,~\eqref{eq:zi} gives $\mu_i|\tilde z_i\cdot x_j|\ge s_{ij}/\delta_i\ge1\ge|x_i\cdot x_j|$, so $h_i(x_j)=0$. Hence $F=\sum_iy_ih_i$ interpolates. The inner weight vectors $\mu_i\tilde z_i\pm x_i$ of $h_i$ have norm $\sqrt{1+\mu_i^2}\le1+\mu_i$, so $T(h_i)\le2+4\mu_i\le(2+4c_0)/\delta_i$, using $\delta_i\le1$. Summing, $T(F)\le Hn(2+4c_0)/\delta=HK_{n,d}/\delta$. Lemma~\ref{lem:reduce} reduces $F$ to at most $n$ atoms without raising the cost, and Lemma~\ref{lem:risk} gives the risk bound.
 \end{proof}
 
 The tents are even functions, so $F$ takes the value $y_i$ also at $-x_i$; this is harmless because no two inputs are parallel.
 
-The angle $\Theta$ between two independent uniform points of $\Sph$ has density $C_d\sin^{d-2}\theta$ on $(0,\pi)$, where $1/C_d=\int_0^\pi\sin^{d-2}\theta\,d\theta=B\bigl(\tfrac{d-1}2,\tfrac12\bigr)$.
+The angle $\Theta$ between two independent uniform points of $\Sph$ has density $C_d\sin^{d-2}\theta$ on $(0,\pi)$, with $C_d$ as in Section~\ref{sec:intro}, since $\int_0^\pi\sin^{d-2}\theta\,d\theta=B\bigl(\tfrac{d-1}2,\tfrac12\bigr)=1/C_d$.
 
 \begin{theorem}\label{thm:upper}
-Let $n\ge2$, let $X_1,\dots,X_n$ be independent and uniform on $\Sph$, let the labels satisfy $|Y_i|\le H$, and let $f_n$ be any measurable selection of minimum-norm interpolants. For $0<r<(d-1)/2$,
+Let $n\ge2$, let $X_1,\dots,X_n$ be independent and uniform on $\Sph$, let the labels satisfy $|Y_i|\le H$, and let $f_n$ be any measurable selection of minimum-norm interpolants, at a fixed width $m\ge n$ or over all widths. For $0<r<(d-1)/2$,
 \begin{equation}\label{eq:moment}
 \EE R(f_n)^r\le\Bigl(\frac{H^2K_{n,d}^2}{2d}\Bigr)^{r}\binom n2\frac{B\bigl(\tfrac{d-1-2r}2,\tfrac12\bigr)}{B\bigl(\tfrac{d-1}2,\tfrac12\bigr)}<\infty .
 \end{equation}
@@ -156,9 +164,9 @@ The inputs are pairwise non-parallel almost surely. By Proposition~\ref{prop:ten
 \[
 \EE\delta^{-2r}\le\binom n2C_d\int_0^\pi\sin^{d-2-2r}\theta\,d\theta=\binom n2\frac{B\bigl(\tfrac{d-1-2r}2,\tfrac12\bigr)}{B\bigl(\tfrac{d-1}2,\tfrac12\bigr)},
 \]
-which is finite exactly when $d-2-2r>-1$. At $r=1$ the ratio is $\Gamma(\frac{d-3}2)\Gamma(\frac d2)/(\Gamma(\frac{d-1}2)\Gamma(\frac{d-2}2))=(d-2)/(d-3)$. For the tail, put $u=\sqrt{A/t}\le1/2$. The event $R(f_n)>t$ forces $\delta<u$, and for one pair $\{\sin\Theta<u\}$ is the union of two caps of angular radius $\arcsin u\le2u$. Since $\sin\theta\le\theta$,
+which is finite exactly when $d-2-2r>-1$. At $r=1$ the ratio is $\Gamma(\frac{d-3}2)\Gamma(\frac d2)/(\Gamma(\frac{d-1}2)\Gamma(\frac{d-2}2))=(d-2)/(d-3)$. For the tail, put $\upsilon=\sqrt{A/t}\le1/2$. The event $R(f_n)>t$ forces $\delta<\upsilon$, and for one pair $\{\sin\Theta<\upsilon\}$ is the union of two caps of angular radius $\arcsin\upsilon\le2\upsilon$. Since $\sin\theta\le\theta$,
 \[
-\PP(\sin\Theta<u)\le2C_d\int_0^{2u}\theta^{d-2}\,d\theta=\frac{2C_d}{d-1}(2u)^{d-1},
+\PP(\sin\Theta<\upsilon)\le2C_d\int_0^{2\upsilon}\theta^{d-2}\,d\theta=\frac{2C_d}{d-1}(2\upsilon)^{d-1},
 \]
 and the union bound over pairs gives~\eqref{eq:uppertail}.
 \end{proof}
@@ -168,67 +176,67 @@ Fix orthonormal $e_1,e_2$ and $\theta\in(0,\pi/2]$, and write $a=\cos(\theta/2)$
 \[
 x_1=ae_1+be_2,\qquad x_2=ae_1-be_2,
 \]
-with labels $1$ and $-1$. The other $k=n-2\ge1$ observations are $(z_i,\tau_i)$ with $z_i\in\Sph$ distinct and $|\tau_i|\le H$. For $\kappa,\rho>0$ let
+with labels $1$ and $-1$. The other inputs are $z_1,\dots,z_k$, $k=n-2\ge1$, and the other observations are $(z_i,\tau_i)$ with $z_i\in\Sph$ distinct and $|\tau_i|\le H$. For $\kappa,\rho>0$ let
 \[
 \mathcal K^{\pm}_{\kappa,\rho}=\bigl\{(z_1,\dots,z_k):\ \pm z_i\cdot e_2\ge\kappa\ \text{for all }i,\ \|z_i-z_j\|\ge\rho\ \text{for }i\ne j\bigr\},
 \]
-compact sets of configurations on one side of the hyperplane $e_2^\perp$, which bisects the pair.
+compact sets of configurations on one side of the hyperplane $e_2^\perp$ bisecting the pair. In this section $O(\theta)$ and $O(\sqrt\theta)$ refer to $\theta\to0$, with implied constants depending only on $n,d,\kappa,\rho,H$.
 
-\begin{lemma}\label{lem:span}
+\begin{lemma}[Spanning]\label{lem:span}
 Let $z_1,\dots,z_k$ be distinct with $z_i\cdot e_2>0$. The vectors $(\sigma(u\cdot z_1),\dots,\sigma(u\cdot z_k))$, $\|u\|=1$, $u\cdot e_1<0$, span $\RR^k$.
 \end{lemma}
 \begin{proof}
 Suppose $\chi\in\RR^k$ annihilates them; by homogeneity $\sum_j\chi_j\sigma(u\cdot z_j)=0$ on the open cone $\{u\cdot e_1<0\}$. Fix $i$. The vector $-e_1+(e_1\cdot z_i)z_i\in z_i^\perp$ has inner product $-1+(e_1\cdot z_i)^2<0$ with $e_1$, the inequality being strict because $z_i\cdot e_2>0$; so $\{u\in z_i^\perp:u\cdot e_1<0\}$ is a nonempty relatively open set. No $z_j$, $j\ne i$, is parallel to $z_i$ (an antipode would have negative $e_2$-coordinate), so each $z_i^\perp\cap z_j^\perp$ is a proper subspace of $z_i^\perp$, and a finite union of proper subspaces contains no nonempty relatively open set. Choose $u_0$ in that open set off all of them. Along $u_0+tz_i$, for small $|t|$, every term with $j\ne i$ is affine in $t$, and the $i$-th term is $\chi_i\sigma(t)$. The jump of the derivative at $t=0$ is $\chi_i$, and it must vanish.
 \end{proof}
 
-Choose such directions $u_1,\dots,u_k$ with $M_{ij}=\sigma(u_j\cdot z_i)$ invertible, and put $\eta=\min_j(-u_j\cdot e_1)>0$ and $\Lambda(M)=\sum_{i,j}|(M^{-1})_{ji}|$. For $\theta\le\min(1,\eta)$ one has $a\ge3/4$ and $b\le\eta/2$, so $u_j\cdot x_\ell\le-a\eta+b<0$ for $\ell=1,2$: these correction atoms vanish at the pair. By continuity of the determinant the same directions keep $M$ invertible, with $\Lambda(M)$ bounded, on a neighbourhood of the configuration; a finite cover of $\mathcal K^+_{\kappa,\rho}$ by such neighbourhoods gives a positive $\eta$ and a finite bound $\Lambda_*$ valid on all of $\mathcal K^+_{\kappa,\rho}$.
+Choose such directions $u_1,\dots,u_k$ with $M_{ij}=\sigma(u_j\cdot z_i)$ invertible, and put $\eta=\min_j(-u_j\cdot e_1)>0$ and $\Lambda(M)=\sum_{i,j}|(M^{-1})_{ji}|$. We call the atoms $\sigma(u_j\cdot x)$ the correction atoms. For $\theta\le\min(1,\eta)$ one has $a\ge3/4$ and $b\le\eta/2$, so $u_j\cdot x_1$ and $u_j\cdot x_2$ are at most $-a\eta+b<0$: the correction atoms vanish at the pair. By continuity of the determinant the same directions keep $M$ invertible, with $\Lambda(M)$ bounded, on a neighbourhood of the configuration; a finite cover of $\mathcal K^+_{\kappa,\rho}$ by such neighbourhoods gives a positive $\eta$ and a finite bound $\Lambda_*$ valid on all of $\mathcal K^+_{\kappa,\rho}$, both depending only on $n,d,\kappa,\rho$.
 
-\begin{lemma}\label{lem:competitor}
-On $\mathcal K^+_{\kappa,\rho}$ there are $K<\infty$ and $\theta_1>0$ such that for $0<\theta\le\theta_1$ the observations admit an interpolant with at most $n$ units and $Q\le2/s+K$.
+\begin{lemma}[Competitor]\label{lem:competitor}
+Let $\theta_1=\min(1,\eta,\kappa/2)$ and $K_0=2+\Lambda_*(H+2)$, which depend only on $n,d,\kappa,\rho,H$. For every $(z_1,\dots,z_k)\in\mathcal K^+_{\kappa,\rho}$, all labels with $|\tau_i|\le H$ and every $0<\theta\le\theta_1$, the observations admit an interpolant with at most $n$ neurons and $Q\le2/s+K_0$.
 \end{lemma}
 \begin{proof}
-Let $v=be_1-ae_2$ and $F_0(x)=a^{-1}\sigma(e_1\cdot x)-(ab)^{-1}\sigma(v\cdot x)$. At the pair, $\sigma(e_1\cdot x_\ell)=a$, $v\cdot x_1=0$ and $v\cdot x_2=2ab=s$, so $F_0(x_1)=1$ and $F_0(x_2)=1-s/(ab)=-1$. Take $\theta_1=\min(1,\eta,\kappa/2)$ and $\theta\le\theta_1$; then the correction atoms vanish at $x_1,x_2$. For each $z_i$, with $\xi_i=z_i\cdot e_1$ and $q_i=z_i\cdot e_2\ge\kappa$, $v\cdot z_i=b\xi_i-aq_i\le b-a\kappa<0$, so $F_0(z_i)=\sigma(\xi_i)/a$. Put $\Delta_i=\tau_i-\sigma(\xi_i)/a$, $c=M^{-1}\Delta$ and $F=F_0+\sum_jc_j\sigma(u_j\cdot x)$. It interpolates, and since $1/a\le2$, $\sum_j|c_j|\le \Lambda_*(H+2)$. Its cost is at most $1/a+1/(ab)+\Lambda_*(H+2)\le2/s+2+\Lambda_*(H+2)$, because $1/(ab)=2/s$ and $1/a\le2$.
+Let $v=be_1-ae_2$ and $F_0(x)=a^{-1}\sigma(e_1\cdot x)-(ab)^{-1}\sigma(v\cdot x)$. At the pair, $\sigma(e_1\cdot x_1)=\sigma(e_1\cdot x_2)=a$, $v\cdot x_1=0$ and $v\cdot x_2=2ab=s$, so $F_0(x_1)=1$ and $F_0(x_2)=1-s/(ab)=-1$. For $\theta\le\theta_1$ the correction atoms vanish at $x_1,x_2$. For each $z_i$, with $\xi_i=z_i\cdot e_1$ and $q_i=z_i\cdot e_2\ge\kappa$, $v\cdot z_i=b\xi_i-aq_i\le b-a\kappa<0$, so $F_0(z_i)=\sigma(\xi_i)/a$. Put $\Delta_i=\tau_i-\sigma(\xi_i)/a$, $c=M^{-1}\Delta$ and $F=F_0+\sum_jc_j\sigma(u_j\cdot x)$. It interpolates, and since $1/a\le2$, $\sum_j|c_j|\le \Lambda_*(H+2)$. Its cost is at most $1/a+1/(ab)+\Lambda_*(H+2)\le2/s+K_0$, because $1/(ab)=2/s$ and $1/a\le2$.
 \end{proof}
 
-\begin{proposition}\label{prop:local}
-On $\mathcal K^+_{\kappa,\rho}$, every minimum-norm interpolant $f_\theta$ satisfies
+\begin{proposition}[Localization]\label{prop:local}
+Let the pair $x_1,x_2$ carry the labels $1$ and $-1$ and the other observations be $(z_i,\tau_i)$ with $|\tau_i|\le H$. If $(z_1,\dots,z_k)\in\mathcal K^+_{\kappa,\rho}$, every minimum-norm interpolant $f_\theta$ satisfies
 \[
 \sup_{\|x\|\le1}\bigl|\theta f_\theta(x)+2\sigma(-e_2\cdot x)\bigr|\to0,\qquad\theta^2R(f_\theta)\to\frac2d\qquad(\theta\to0),
 \]
-uniformly over the configurations, the labels with $|\tau_i|\le H$ and the minimizers. On $\mathcal K^-_{\kappa,\rho}$ the same holds with $-2\sigma(-e_2\cdot x)$ replaced by $2\sigma(e_2\cdot x)$.
+uniformly over the configurations in $\mathcal K^+_{\kappa,\rho}$, the labels and the minimizers. If $(z_1,\dots,z_k)\in\mathcal K^-_{\kappa,\rho}$, then $\sup_{\|x\|\le1}|\theta f_\theta(x)-2\sigma(e_2\cdot x)|\to0$ and $\theta^2R(f_\theta)\to2/d$, with the same uniformity.
 \end{proposition}
 \begin{proof}
-Write $f_\theta$ in atomic form~\eqref{eq:atomic}; by Lemma~\ref{lem:competitor} its total weight $T$ is at most $2/s+K$. For a unit $u$ let $g(u)=(\sigma(u\cdot x_1)-\sigma(u\cdot x_2))/s$ and $q=u\cdot e_2$. Since $x_1-x_2=2be_2$ and $\sigma$ is monotone and $1$-Lipschitz, $0\le g(u)\le q/a$ when $q\ge0$ and $q/a\le g(u)\le0$ when $q\le0$. For $\varsigma\in\{\pm1\}$ this gives
+Write $f_\theta$ in atomic form~\eqref{eq:atomic} with total weight equal to the interpolation cost; by Lemma~\ref{lem:competitor} this weight is at most $2/s+K_0$. For a unit vector $u$ let $g(u)=(\sigma(u\cdot x_1)-\sigma(u\cdot x_2))/s$ and $q=u\cdot e_2$. Since $x_1-x_2=2be_2$ and $\sigma$ is monotone and $1$-Lipschitz, $0\le g(u)\le q/a$ when $q\ge0$ and $q/a\le g(u)\le0$ when $q\le0$. For $\varsigma\in\{\pm1\}$ this gives
 \begin{equation}\label{eq:loc}
 \|u-\varsigma e_2\|^2\le4\bigl(1-a\,\varsigma\,g(u)\bigr):
 \end{equation}
-if $\varsigma q\ge0$ then $\|u-\varsigma e_2\|^2=2(1-\varsigma q)\le2(1-a\varsigma g(u))$, and if $\varsigma q<0$ then $\varsigma g(u)\le0$ and $\|u-\varsigma e_2\|^2\le4$. Interpolation at the pair gives $\sum_j\gamma_jg(u_j)=2/s$. Put $\varsigma_j=\operatorname{sign}\gamma_j$, $M_\theta=\theta\sum_j|\gamma_j|$, $A_\theta=\theta\sum_{\gamma_j>0}\gamma_j$ and $B_\theta=M_\theta-A_\theta$. Multiplying~\eqref{eq:loc} by $\theta|\gamma_j|$ and summing,
+if $\varsigma q\ge0$ then $\|u-\varsigma e_2\|^2=2(1-\varsigma q)\le2(1-a\varsigma g(u))$, and if $\varsigma q<0$ then $\varsigma g(u)\le0$ and $\|u-\varsigma e_2\|^2\le4$. Interpolation at the pair gives $\sum_j\gamma_jg(u_j)=2/s$. Put $\varsigma_j=\operatorname{sign}\gamma_j$, $m_\theta=\theta\sum_j|\gamma_j|$, $m^+_\theta=\theta\sum_{\gamma_j>0}\gamma_j$ and $m^-_\theta=m_\theta-m^+_\theta$. Multiplying~\eqref{eq:loc} by $\theta|\gamma_j|$ and summing,
 \begin{equation}\label{eq:locsum}
-\sum_j\theta|\gamma_j|\,\|u_j-\varsigma_je_2\|^2\le4\Bigl(M_\theta-\frac{2a\theta}{s}\Bigr)=4\Bigl(M_\theta-\frac\theta b\Bigr).
+\sum_j\theta|\gamma_j|\,\|u_j-\varsigma_je_2\|^2\le4\Bigl(m_\theta-\frac{2a\theta}{s}\Bigr)=4\Bigl(m_\theta-\frac\theta b\Bigr).
 \end{equation}
-In particular $2\le\theta/b\le M_\theta\le U_\theta:=2\theta/s+K\theta$, and $U_\theta-\theta/b=K\theta+(\theta/b)(1-a)/a=O(\theta)$. Let $G_\theta(x)=A_\theta\sigma(e_2\cdot x)-B_\theta\sigma(-e_2\cdot x)$. The Lipschitz bound, Cauchy--Schwarz and~\eqref{eq:locsum} give, for $\|x\|\le1$,
+In particular $2\le\theta/b\le m_\theta\le U_\theta:=2\theta/s+K_0\theta$, and $U_\theta-\theta/b=K_0\theta+(\theta/b)(1-a)/a=O(\theta)$. Let $G_\theta(x)=m^+_\theta\sigma(e_2\cdot x)-m^-_\theta\sigma(-e_2\cdot x)$. The Lipschitz bound, Cauchy--Schwarz and~\eqref{eq:locsum} give, for $\|x\|\le1$,
 \[
-|\theta f_\theta(x)-G_\theta(x)|\le\sum_j\theta|\gamma_j|\,\|u_j-\varsigma_je_2\|\le2\sqrt{M_\theta(M_\theta-\theta/b)}\le E_\theta:=2\sqrt{U_\theta(U_\theta-\theta/b)}=O(\sqrt\theta).
+|\theta f_\theta(x)-G_\theta(x)|\le\sum_j\theta|\gamma_j|\,\|u_j-\varsigma_je_2\|\le2\sqrt{m_\theta(m_\theta-\theta/b)}\le E_\theta:=2\sqrt{U_\theta(U_\theta-\theta/b)}=O(\sqrt\theta).
 \]
-At an extra point $z_i$, where $q_i\ge\kappa$, this gives $A_\theta\kappa\le A_\theta q_i\le\theta H+E_\theta$, so $A_\theta\to0$; and $B_\theta=M_\theta-A_\theta\to2$. Since the two half-space ReLUs have disjoint supports,
+At another input $z_i$, where $q_i\ge\kappa$, this gives $m^+_\theta\kappa\le m^+_\theta q_i\le\theta H+E_\theta$, so $m^+_\theta\to0$; and $m^-_\theta=m_\theta-m^+_\theta\to2$. Since $\sigma(e_2\cdot x)$ and $\sigma(-e_2\cdot x)$ have disjoint supports,
 \[
 \begin{aligned}
-\sup_{\|x\|\le1}|\theta f_\theta(x)+2\sigma(-e_2\cdot x)|&\le E_\theta+\max\{A_\theta,|B_\theta-2|\}\le E_\theta+A_\theta+U_\theta-2\\
+\sup_{\|x\|\le1}|\theta f_\theta(x)+2\sigma(-e_2\cdot x)|&\le E_\theta+\max\{m^+_\theta,|m^-_\theta-2|\}\le E_\theta+m^+_\theta+U_\theta-2\\
 &\le(1+\kappa^{-1})E_\theta+\theta H/\kappa+U_\theta-2\to0,
 \end{aligned}
 \]
-where the middle inequality uses $2-B_\theta=2-M_\theta+A_\theta\le A_\theta$ and $B_\theta-2\le M_\theta-2\le U_\theta-2$,
-with every quantity depending only on $K,\kappa,H$. Finally $\EE(2\sigma(-e_2\cdot X))^2=4/(2d)=2/d$, and the uniform convergence gives $\theta^2R(f_\theta)\to2/d$. The case $\mathcal K^-$ follows by replacing $e_2$ by $-e_2$, exchanging the two pair points and negating the function and all labels, which preserves $Q$ and $R$.
+where the middle inequality uses $2-m^-_\theta=2-m_\theta+m^+_\theta\le m^+_\theta$ and $m^-_\theta-2\le m_\theta-2\le U_\theta-2$,
+and the right side depends only on $\theta,n,d,\kappa,\rho,H$. Finally $\EE(2\sigma(-e_2\cdot X))^2=4/(2d)=2/d$, and the uniform convergence gives $\theta^2R(f_\theta)\to2/d$. The case $\mathcal K^-$ follows by replacing $e_2$ by $-e_2$, exchanging the two pair points and negating the function and all labels, which preserves $Q$ and $R$.
 \end{proof}
 
 \begin{remark}\label{rem:sides}
-The one-side condition cannot be dropped from this argument. If one extra point has $z\cdot e_2\ge\kappa$ and another has $z'\cdot e_2\le-\kappa$, with bounded labels, then any family of interpolants with $Q\le2/s+K$ would satisfy $A_\theta+B_\theta\to2$ by the bounds above, while the two extra points force $A_\theta\to0$ and $B_\theta\to0$. So the cost exceeds $2/s$ by an unbounded amount; this does not by itself decide the size of the risk.
+The condition that the other inputs lie on one side of $e_2^\perp$ cannot be dropped from this argument. If one other input has $z\cdot e_2\ge\kappa$ and another has $z'\cdot e_2\le-\kappa$, with bounded labels, then any family of interpolants with $Q\le2/s+K_0$ would satisfy $m^+_\theta+m^-_\theta\to2$ by the bounds above, while the two other inputs force $m^+_\theta\to0$ and $m^-_\theta\to0$. So the cost exceeds $2/s$ by an unbounded amount; this does not by itself decide the size of the risk.
 \end{remark}
 
 \begin{theorem}\label{thm:lower}
 Under the hypotheses of Theorem~\ref{thm:main},
 \[
-\liminf_{t\to\infty}t^{\alpha}\,\PP(R_n>t)\ge\frac{2^{2-n}C_d}{d-1}\Bigl(\frac2d\Bigr)^{\alpha},\qquad\alpha=\frac{d-1}2,
+\liminf_{t\to\infty}t^{\alpha}\,\PP(R_n>t)\ge\frac{2^{2-n}C_d}{d-1}\Bigl(\frac2d\Bigr)^{\alpha},
 \]
 and $\EE R_n^r=\infty$ for every $r\ge\alpha$.
 \end{theorem}
@@ -244,13 +252,11 @@ Letting $\zeta\to0$ and $\kappa=\rho\to0$ gives the stated constant. The moment 
 The lower limit is Theorem~\ref{thm:lower}, and the upper limit is~\eqref{eq:uppertail} with $H=1$. The moment statement follows from Theorem~\ref{thm:lower} and~\eqref{eq:moment}. For $d\ge4$, $\EE R_n>0$ because an interpolant of a nonzero label is a continuous function that is nonzero on a neighbourhood of that input.
 \end{proof}
 
-\section{Discussion}\label{sec:discussion}
-The exponent $(d-1)/2$ is the tail exponent of $\delta^{-2}$ for a single pair, and Theorem~\ref{thm:main} says that, at a fixed sample size, the minimum-norm interpolant is no worse than its smallest projective gap forces and, on the event that a given pair of inputs has opposite labels and the other inputs lie on one side of the hyperplane bisecting it, exactly that bad as the angle of the pair tends to zero; given the pair, that event has probability $2^{2-n}$. For univariate inputs this is consistent with~\cite{JVS}: there the mechanism is the same close pair, and the expected risk is infinite. On the sphere the expectation becomes finite once $d\ge4$, so the statement that minimum-norm interpolation is catastrophic in expectation is a low-dimensional one at fixed $n$.
-
-The constants decay like $2^{-n}$ from below and grow polynomially from above, and neither is uniform in $n$. Whether the risk converges in probability, stays bounded away from zero, or grows with $n$, that is whether the overfitting is benign, tempered or catastrophic in the sense of~\cite{MSAPBN}, is not settled here. A lower bound in probability would presumably need an inequality for the $\mathcal R$-norm of~\cite{OWSS} in the role played by the Sobolev inequality in~\cite{KSNM}; an upper bound uniform in $n$ would need interpolants much cheaper than the tents of Proposition~\ref{prop:tents}, whose cost grows like $n^2$. The results also leave open what gradient descent selects, and the effect of biases and of other input laws.
+\section{Open questions}\label{sec:discussion}
+For univariate inputs the expected risk in~\cite{JVS} is infinite at every sample size. On the sphere, at a fixed sample size, it is finite once $d\ge4$. Neither constant in~\eqref{eq:tail} is uniform in $n$. It is open whether $R_n$ converges in probability, stays bounded away from zero, or grows as $n\to\infty$, that is, whether the overfitting is benign, tempered or catastrophic in the sense of~\cite{MSAPBN}. An upper bound uniform in $n$ would need interpolants much cheaper than the tents of Proposition~\ref{prop:tents}, whose cost bound grows like $n^2$. Which interpolant gradient descent selects, and the tail of the risk for networks with biases or for other input laws, are also open.
 
 \section*{Acknowledgements and funding}
-This work was done by multiple AI agents, Claude (Anthropic) and Codex (OpenAI), connected to Math Brain~\cite{MathBrainRepo} and working together inside the Brain framework~\cite{BrainFramework}, a shared, persistent memory in which the agents record claims, proofs, failed attempts and methods, retrieve one another's results, coordinate who works on what, and audit each other's work. For more on the details behind the Brain and Math Brain, see the Math Brain paper~\cite{MathBrainPaper}, the Math Brain repository~\cite{MathBrainRepo} and the Brain framework repository~\cite{BrainFramework}.
+This work was done by multiple AI agents, Claude (Anthropic) and Codex (OpenAI), connected to Math Brain~\cite{MathBrainRepo} and working together inside the Brain framework~\cite{BrainFramework}. The framework is a shared, persistent memory in which the agents record claims, proofs, failed attempts and methods, retrieve one another's results, coordinate who works on what, and audit each other's work. It is described in the Math Brain paper~\cite{MathBrainPaper}.
 
 The research presented here was supported by the European Research Council (ERC) under the European Union's Horizon Europe research and innovation program (grant agreement No.~101041711) and by the Simons Foundation as part of the Collaboration on the Mathematical and Scientific Foundations of Deep Learning. It was also supported by Heights Labs, by Convex Nexus Capital, by the Israel Science Foundation (grant number 2258/19), and by the Israel Science Foundation (ISF Grant 4101/25). Computational resources were provided in part by Google Cloud through its education credits program (credit 530550103).
 
@@ -258,10 +264,10 @@ The research presented here was supported by the European Research Council (ERC)
 The author holds equity in Heights Labs and in Convex Nexus Capital and has a management role at Convex Nexus Capital. These entities are included in the funding declaration above.
 
 \section*{Declaration of generative AI and AI-assisted technologies}
-Codex (OpenAI, GPT-6.1) developed the arguments of Sections~\ref{sec:upper} and~\ref{sec:lower}. Claude Opus~5.5 (Anthropic) checked the proofs line by line, wrote the check script and wrote the paper. The question and the close-pair mechanism are due to Joshi, Vardi and Srebro~\cite{JVS}, the atomic view of the weight norm to Savarese, Evron, Soudry and Srebro~\cite{SESS} and Ongie, Willett, Soudry and Srebro~\cite{OWSS}, and the taxonomy of overfitting to Mallinar et al.~\cite{MSAPBN}. The atomic form and the reduction to finitely many atoms are standard; see also Bach~\cite{Bach} and Parhi and Nowak~\cite{PN}. New here are the uniform one-sided localization of Proposition~\ref{prop:local}, the bound of Proposition~\ref{prop:tents} on the interpolation cost by the smallest projective gap, and their combination into the two-sided tail of Theorem~\ref{thm:main}. The author directed the work and is responsible for the content.
+Codex (OpenAI, GPT-6.1) developed the arguments of Sections~\ref{sec:upper} and~\ref{sec:lower}. Claude Opus~5.5 (Anthropic) checked the proofs line by line, wrote the check script and wrote the paper. The question of the risk of minimum-norm interpolants of noisy labels and the spikes at close pairs come from Joshi, Vardi and Srebro~\cite{JVS}. The function-space view of the weight norm is due to Savarese, Evron, Soudry and Srebro~\cite{SESS} and Ongie, Willett, Soudry and Srebro~\cite{OWSS}, and the taxonomy of overfitting to Mallinar et al.~\cite{MSAPBN}. The rescaling identity of Section~\ref{sec:atoms} is Theorem~1 of Neyshabur, Tomioka and Srebro~\cite{NTS}. The reduction to finitely many atoms is Carath\'eodory's theorem for cones, which Bach~\cite{Bach} uses for the same purpose; for networks with biases Parhi and Nowak~\cite{PN} show that as many neurons as data points suffice. New here are the localization of Proposition~\ref{prop:local}, uniform over the configurations of the other inputs, the labels and the minimizers; the bound of Proposition~\ref{prop:tents} on the interpolation cost by the reciprocal of the smallest sine of the angle between two input lines; and their combination into the two-sided tail of Theorem~\ref{thm:main}. The author directed the work and is responsible for the content.
 
 \section*{Data availability}
-The proofs do not depend on computation. The \LaTeX{} source of the paper and a Python script are available at \url{https://github.com/yspennstate/relu-min-norm-interpolation-risk-tail}. The script checks the tent identity, the interpolation and cost bounds of Proposition~\ref{prop:tents} and Lemma~\ref{lem:competitor} on random configurations, and the beta-function ratios of Theorem~\ref{thm:upper} against numerical integration.
+The proofs do not depend on computation. The \LaTeX{} source of the paper and a Python script are available at \url{https://github.com/yspennstate/relu-min-norm-interpolation-risk-tail/tree/v1.1}. The script checks the tent identity, the interpolation and cost bounds of Proposition~\ref{prop:tents} and Lemma~\ref{lem:competitor} on random configurations, and the beta-function ratios of Theorem~\ref{thm:upper} against numerical integration.
 
 \appendix
 \input{notation}
@@ -272,6 +278,7 @@ The proofs do not depend on computation. The \LaTeX{} source of the paper and a 
 \bibitem{KSNM} K.~Karhadkar, A.~Sietsema, D.~Needell and G.~Mont\'ufar, \emph{Harmful overfitting in Sobolev spaces}, preprint (2026), arXiv:2602.00825.
 \bibitem{KYS} G.~Kornowski, G.~Yehudai and O.~Shamir, \emph{From tempered to benign overfitting in ReLU neural networks}, Advances in Neural Information Processing Systems 36 (2023); arXiv:2305.15141.
 \bibitem{MSAPBN} N.~Mallinar, J.~B.~Simon, A.~Abedsoltan, P.~Pandit, M.~Belkin and P.~Nakkiran, \emph{Benign, tempered, or catastrophic: a taxonomy of overfitting}, Advances in Neural Information Processing Systems 35 (2022); arXiv:2207.06569.
+\bibitem{NTS} B.~Neyshabur, R.~Tomioka and N.~Srebro, \emph{In search of the real inductive bias: on the role of implicit regularization in deep learning}, International Conference on Learning Representations (ICLR), workshop track, 2015; arXiv:1412.6614.
 \bibitem{OWSS} G.~Ongie, R.~Willett, D.~Soudry and N.~Srebro, \emph{A function space view of bounded norm infinite width ReLU nets: the multivariate case}, International Conference on Learning Representations (ICLR), 2020; arXiv:1910.01635.
 \bibitem{PN} R.~Parhi and R.~D.~Nowak, \emph{Banach space representer theorems for neural networks and ridge splines}, Journal of Machine Learning Research 22 (2021), no.~43, 1--40; arXiv:2006.05626.
 \bibitem{SESS} P.~Savarese, I.~Evron, D.~Soudry and N.~Srebro, \emph{How do infinite width bounded norm networks look in function space?}, Conference on Learning Theory (COLT), 2019; arXiv:1902.05040.
